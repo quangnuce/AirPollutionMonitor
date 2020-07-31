@@ -105,13 +105,13 @@ void sendData() {
   }
 
 
-//  //get GPS
-//  double gps_speed, gps_altitude, gps_view_satellites, gps_used_satellites;
-//  int gps_fixstatus = modem.getGPS(&last_lat, &last_lng);
-//  if ( gps_fixstatus ) {
-//    Serial.println("get GPS ok...");
-//
-//  }
+  //  //get GPS
+  //  double gps_speed, gps_altitude, gps_view_satellites, gps_used_satellites;
+  //  int gps_fixstatus = modem.getGPS(&last_lat, &last_lng);
+  //  if ( gps_fixstatus ) {
+  //    Serial.println("get GPS ok...");
+  //
+  //  }
 
 
   Serial.println("Sending data...");
@@ -128,10 +128,32 @@ void sendData() {
   dtostrf(last_lng, 10, 7, str_lng);
   sprintf(mydata, "{\"p25\":\"%s\", \"lat\":\"%s\",\"lng\":\"%s\"}", str_pm, str_lat, str_lng);
   Serial.println(mydata);
-    tb.sendTelemetryJson("{\"p25\":\"240\", \"lat\":\"20.988322\",\"lng\":\"105.842436\"}");
+  tb.sendTelemetryJson("{\"p25\":\"240\", \"lat\":\"20.988322\",\"lng\":\"105.842436\"}");
 
 }
+void receiveData() {
 
+  byte n = Serial.available();
+  if (n != 0)
+  {
+    char x = Serial.read();
+    if (x != 0x0A)  //end mark no found
+    {
+      myData[i] = x;  //save ASCII coded data in array
+      i++;
+    }
+    else
+    {
+      int z = atoi(myData);   // getting the data in integer form
+      //Serial.println(z);
+      float y = (float)z * 0.10;
+      //Serial.println(y, 1);  //shows 70.2 .....
+      pm25 = y;
+      i = 0;
+    }
+  }
+
+}
 
 void setup() {
   Serial.begin(9600);
@@ -140,7 +162,7 @@ void setup() {
 }
 
 void  loop() {
-  // recieveData();
+  receiveData();
   sendData();
   Serial.print("pm25:");
   Serial.println(pm25);
