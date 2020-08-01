@@ -132,7 +132,13 @@ void loop() {
     modemConnected = true;
     //Serial.println(" OK");
   }
-
+    //get GPS
+   // double gps_speed, gps_altitude, gps_view_satellites, gps_used_satellites;
+    int gps_fixstatus = modem.getGPS(&last_lat, &last_lng);
+    if ( gps_fixstatus ) {
+     // Serial.println("get GPS ok...");
+  
+    }
 
   //Serial.println("Sending data...");
 
